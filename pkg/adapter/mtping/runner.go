@@ -29,6 +29,7 @@ import (
 	"k8s.io/client-go/kubernetes"
 	typedcorev1 "k8s.io/client-go/kubernetes/typed/core/v1"
 	"k8s.io/client-go/tools/record"
+	"knative.dev/eventing/pkg/adapter/v2/util/processsignalwaitgroup"
 
 	kncloudevents "knative.dev/eventing/pkg/adapter/v2"
 	"knative.dev/eventing/pkg/adapter/v2/util/crstatusevent"
@@ -116,6 +117,9 @@ func (a *cronJobsRunner) Start(stopCh <-chan struct{}) error {
 
 func (a *cronJobsRunner) cronTick(ctx context.Context, event cloudevents.Event) func() {
 	return func() {
+		processsignalwaitgroup.Add(ctx, 1)
+		defer processsignalwaitgroup.Done(ctx)
+
 		if result := a.Client.Send(ctx, event); !cloudevents.IsACK(result) {
 			// Exhausted number of retries. Event is lost.
 			a.Logger.Error("failed to send cloudevent", zap.Any("result", result))

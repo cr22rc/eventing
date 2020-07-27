@@ -18,9 +18,11 @@ package mtping
 
 import (
 	"context"
+	"time"
 
 	cloudevents "github.com/cloudevents/sdk-go/v2"
 	"go.uber.org/zap"
+	"knative.dev/eventing/pkg/adapter/v2/util/processsignalwaitgroup"
 	kubeclient "knative.dev/pkg/client/injection/kube/client"
 	"knative.dev/pkg/logging"
 
@@ -55,6 +57,7 @@ func (a *mtpingAdapter) Start(ctx context.Context) error {
 	if err := a.runner.Start(ctx.Done()); err != nil {
 		return err
 	}
+	processsignalwaitgroup.WaitTimeout(ctx, time.Second*20)
 
 	a.logger.Infof("runner stopped")
 	return nil

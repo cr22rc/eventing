@@ -17,6 +17,7 @@ limitations under the License.
 package main
 
 import (
+	"knative.dev/eventing/pkg/adapter/v2/util/processsignalwaitgroup"
 	"knative.dev/pkg/signals"
 
 	"knative.dev/eventing/pkg/adapter/mtping"
@@ -31,5 +32,6 @@ func main() {
 	ctx := signals.NewContext()
 	ctx = adapter.WithConfigMapWatcherEnabled(ctx)
 	ctx = adapter.WithInjectorEnabled(ctx)
+	ctx = processsignalwaitgroup.ContextWithProcessSignalWaitGroup(ctx)
 	adapter.MainWithContext(ctx, component, mtping.NewEnvConfig, mtping.NewAdapter)
 }
