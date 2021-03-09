@@ -47,7 +47,7 @@ func FromContextOrDefaults(ctx context.Context) *Config {
 	}
 	pingDefaults, err := NewPingDefaultsConfigFromMap(map[string]string{})
 	if err != nil || pingDefaults == nil {
-		pingDefaults = &PingDefaults{DataMaxSize: DefaultDataMaxSize}
+		pingDefaults = &PingDefaults{DataMaxSize: DefaultDataMaxSize, DefaultTimeZone: DefaultTimeZone}
 		pingDefaults.GetPingConfig()
 	}
 

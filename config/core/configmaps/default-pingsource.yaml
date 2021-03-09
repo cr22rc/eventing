@@ -41,3 +41,10 @@ data:
     # Max number of bytes allowed to be sent for message excluding any
     # base64 decoding. Default is no limit set for data
     dataMaxSize: -1
+
+    # The defaultTimeZone is only used if the pingsource CR timezone is not specified.
+    # If neither are specified it then defaults to the system time zone.
+    # About time zones: https://www.iana.org/time-zones List of valid
+    # Timezone values: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones'
+    # Timezone is used when intrepreting pingsource schedules.
+    defaultTimeZone: "UTC"  # example change to UTC

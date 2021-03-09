@@ -38,9 +38,14 @@ func (c *PingSource) Validate(ctx context.Context) *apis.FieldError {
 func (cs *PingSourceSpec) Validate(ctx context.Context) *apis.FieldError {
 	var errs *apis.FieldError
 
+	pingConfig := config.FromContextOrDefaults(ctx)
+	pingDefaults := pingConfig.PingDefaults.GetPingConfig()
+
 	schedule := cs.Schedule
 	if cs.Timezone != "" {
 		schedule = "CRON_TZ=" + cs.Timezone + " " + schedule
+	} else if pingDefaults.DefaultTimeZone != "" {
+		schedule = "CRON_TZ=" + pingDefaults.DefaultTimeZone + " " + schedule
 	}
 
 	if _, err := cron.ParseStandard(schedule); err != nil {
@@ -52,9 +57,6 @@ func (cs *PingSourceSpec) Validate(ctx context.Context) *apis.FieldError {
 			errs = errs.Also(fe)
 		}
 	}
-
-	pingConfig := config.FromContextOrDefaults(ctx)
-	pingDefaults := pingConfig.PingDefaults.GetPingConfig()
 
 	if fe := cs.Sink.Validate(ctx); fe != nil {
 		errs = errs.Also(fe.ViaField("sink"))
